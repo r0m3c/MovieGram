@@ -1,0 +1,6 @@
+Movie Name, Rating
+1) Batman,   9.9
+2) The Outlaw King,   6.9
+3) The power of the Dog,   6.8
+4) The Green Knight,   6.6
+5) Babel,   5.5
