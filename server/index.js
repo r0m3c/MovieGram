@@ -13,11 +13,19 @@ import exceljs from "exceljs";
 // code that will make our backend server run
 const app = express(); // setting up our express server
 
+// const corsOptions = {
+//     origin: 'http://127.0.0.1:5173',
+//     credentials: true,
+//     exposedHeaders: 'Access-Control-Allow-Credentials',
+// };
+
 const corsOptions = {
-    origin: 'http://127.0.0.1:5173',
-    credentials: true,
-    exposedHeaders: 'Access-Control-Allow-Credentials',
+  origin: 'https://movie-gram.vercel.app',
+  credentials: true,
+  exposedHeaders: 'Access-Control-Allow-Credentials',
 };
+
+// https://movie-gram.vercel.app/
 
 app.use(cookieParser());
 app.use(cors(corsOptions));
