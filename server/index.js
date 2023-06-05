@@ -8,22 +8,26 @@ import jwt from "jsonwebtoken";
 import cookieParser from "cookie-parser";
 import multer from "multer";
 import exceljs from "exceljs";
+import dotenv from "dotenv"
 
+dotenv.config();
 
 // code that will make our backend server run
 const app = express(); // setting up our express server
 
-// const corsOptions = {
-//     origin: 'http://127.0.0.1:5173',
-//     credentials: true,
-//     exposedHeaders: 'Access-Control-Allow-Credentials',
-// };
-
+// Making Local Changes
 const corsOptions = {
-  origin: 'https://movie-gram.vercel.app',
-  credentials: true,
-  exposedHeaders: 'Access-Control-Allow-Credentials',
+    origin: 'http://127.0.0.1:5173',
+    credentials: true,
+    exposedHeaders: 'Access-Control-Allow-Credentials',
 };
+
+// Launching website
+// const corsOptions = {
+//   origin: 'https://movie-gram.vercel.app',
+//   credentials: true,
+//   exposedHeaders: 'Access-Control-Allow-Credentials',
+// };
 
 // https://movie-gram.vercel.app/
 
@@ -33,13 +37,17 @@ app.use(express.json());
 app.use(bodyParser.urlencoded({extended:true}));
 //
 
-// MySQL db connection
-const db = mysql2.createConnection({
-    host: 'localhost',
-    user: 'root',
-    password: 'Leocool99!',
-    database: 'MovieGram'
-});
+// MySQL db connection: MySQLWorkBench
+// const db = mysql2.createConnection({
+//     host: 'localhost',
+//     user: 'root',
+//     password: 'Leocool99!',
+//     database: 'MovieGram'
+// });
+
+// Railway DB Connection
+const urlDB = `mysql2://${process.env.MYSQLUSER}:${process.env.MYSQLPASSWORD}@${process.env.MYSQLHOST}:${process.env.MYSQLPORT}/${process.env.MYSQLDATABASE}`;
+const db = mysql2.createConnection(urlDB);
 
 // const db = mysql.createConnection({
 //   host: '127.0.0.1',
