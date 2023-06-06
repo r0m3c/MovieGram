@@ -46,7 +46,8 @@ app.use(bodyParser.urlencoded({extended:true}));
 // });
 
 // Railway DB Connection
-const urlDB = `mysql2://${process.env.MYSQLUSER}:${process.env.MYSQLPASSWORD}@${process.env.MYSQLHOST}:${process.env.MYSQLPORT}/${process.env.MYSQLDATABASE}`;
+// const urlDB = `mysql2://${process.env.MYSQLUSER}:${process.env.MYSQLPASSWORD}@${process.env.MYSQLHOST}:${process.env.MYSQLPORT}/${process.env.MYSQLDATABASE}`;
+const urlDB = "mysql://root:OZNryeJgHmlKQgo30S49@containers-us-west-143.railway.app:7964/railway";
 const db = mysql2.createConnection(urlDB);
 
 // const db = mysql.createConnection({
