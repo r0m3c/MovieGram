@@ -112,7 +112,7 @@ const Register = () => {
       const formData = new FormData();
       formData.append("file",newImg);
       // const res = await Axios.post("http://localhost:2030/api/upload", formData);
-      const res = await Axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/upload`, formData);
+      const res = await Axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/upload`, formData);
       return res.data;
     } catch (err) {
       console.log(err);
@@ -125,7 +125,7 @@ const Register = () => {
       const imgURL = await upload();
       
       // await Axios.post("http://localhost:2030/api/register", { ...inputs, img: newImg ? imgURL : "" });
-      await Axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/register`, { ...inputs, img: newImg ? imgURL : "" });
+      await Axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/register`, { ...inputs, img: newImg ? imgURL : "" });
       navigate("/login");
     } catch(err) {
         setErr(err.response.data);

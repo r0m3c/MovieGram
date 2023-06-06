@@ -16,7 +16,7 @@ export const AuthContextProvider = ({children}) => {
     // new login (using storage)
     const login = async (inputs) => {
         try {
-          const response = await Axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/login`, inputs);
+          const response = await Axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/login`, inputs);
           const token = response.data.token;
       
           // Store the token in local storage
@@ -37,7 +37,7 @@ export const AuthContextProvider = ({children}) => {
     // new logout (using local storage)
     const logout = async () => {
         try {
-          await Axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/logout`);
+          await Axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/logout`);
           localStorage.removeItem("access_token");
           setCurrentUser(null);
         } catch (error) {
