@@ -122,11 +122,16 @@ export default function Home() {
     const handleDelete = async (movieId) => {
         try {
           const token = localStorage.getItem("access_token");
-          await Axios.delete("http://localhost:2030/api/delete/" + String(movieId), {
+          await Axios.delete(`${process.env.REACT_APP_BACKEND_URL}/api/delete/` + String(movieId), {
             headers: {
               Authorization: token,
             },
           });
+        //   await Axios.delete("http://localhost:2030/api/delete/" + String(movieId), {
+        //     headers: {
+        //       Authorization: token,
+        //     },
+        //   });
           setMovie(prevMovies => prevMovies.filter(movie => movie.id !== movieId));
 
           setShowDeleteConfirmation(null);
@@ -139,7 +144,7 @@ export default function Home() {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const res = await Axios.get("http://localhost:2030/api/movies");
+                const res = await Axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/movies`);
                 setMovie(res.data);
             } catch(err) {
                 console.log(err);
@@ -151,7 +156,7 @@ export default function Home() {
 
     const fetchComments = async (movieId) => {
         try {
-            const res = await Axios.get("http://localhost:2030/api/comments/" + String(movieId));
+            const res = await Axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/comments/` + String(movieId));
             setComments({ ...comments, [movieId]: res.data });
         } catch(err) {
             console.log(err);
@@ -162,7 +167,7 @@ export default function Home() {
         try {
           const formData = new FormData();
           formData.append("file",img);
-          const res = await Axios.post("http://localhost:2030/api/upload", formData);
+          const res = await Axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/upload`, formData);
           return res.data;
         } catch (err) {
           console.log(err);
@@ -178,7 +183,7 @@ export default function Home() {
             }
             // const imgURL = await upload();
             // console.log(imgURL);
-            await Axios.post("http://localhost:2030/api/add/comments/" + String(movieId), { user_id, description, imgURL })
+            await Axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/add/comments/` + String(movieId), { user_id, description, imgURL })
         } catch(err) {
             console.log(err);
         }
@@ -197,7 +202,7 @@ export default function Home() {
     const handleCommentDelete = async (commentId) => {
         try {
           const token = localStorage.getItem('access_token');
-          await Axios.delete("http://localhost:2030/api/comment/delete/" + String(commentId), {
+          await Axios.delete(`${process.env.REACT_APP_BACKEND_URL}/api/comment/delete/` + String(commentId), {
             headers: {
               Authorization: token,
             }
