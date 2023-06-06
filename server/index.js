@@ -37,11 +37,17 @@ app.use(express.json());
 app.use(bodyParser.urlencoded({extended:true}));
 //
 
-app.use(function(req, res, next) {
-  res.header("Access-Control-Allow-Origin", "https://movie-gram.vercel.app");
-  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+// app.use(function(req, res, next) {
+//   res.header("Access-Control-Allow-Origin", "https://movie-gram.vercel.app");
+//   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+//   next();
+// });
+
+app.use((req, res, next) => {
+  res.setHeader('Access-Control-Allow-Origin', 'https://movie-gram.vercel.app');
   next();
 });
+
 
 // MySQL db connection: MySQLWorkBench
 // const db = mysql2.createConnection({
