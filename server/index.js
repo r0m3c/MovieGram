@@ -16,18 +16,18 @@ dotenv.config();
 const app = express(); // setting up our express server
 
 // Making Local Changes
-const corsOptions = {
-    origin: 'http://127.0.0.1:5173',
-    credentials: true,
-    exposedHeaders: 'Access-Control-Allow-Credentials',
-};
+// const corsOptions = {
+//     origin: 'http://127.0.0.1:5173',
+//     credentials: true,
+//     exposedHeaders: 'Access-Control-Allow-Credentials',
+// };
 
 // Launching website
-// const corsOptions = {
-//   origin: 'https://movie-gram.vercel.app',
-//   credentials: true,
-//   exposedHeaders: 'Access-Control-Allow-Credentials',
-// };
+const corsOptions = {
+  origin: 'https://movie-gram.vercel.app',
+  credentials: true,
+  exposedHeaders: 'Access-Control-Allow-Credentials',
+};
 
 // https://movie-gram.vercel.app/
 
