@@ -12,8 +12,7 @@ import dotenv from "dotenv"
 
 dotenv.config();
 
-// code that will make our backend server run
-const app = express(); // setting up our express server
+const app = express(); 
 
 // Making Local Changes
 // const corsOptions = {
@@ -29,22 +28,20 @@ const corsOptions = {
   exposedHeaders: 'Access-Control-Allow-Credentials',
 };
 
-// https://movie-gram.vercel.app/
-
 app.use(cookieParser());
 app.use(cors(corsOptions));
 app.use(express.json());
 app.use(bodyParser.urlencoded({extended:true}));
 //
 
-// app.use(function(req, res, next) {
-//   res.header("Access-Control-Allow-Origin", "https://movie-gram.vercel.app");
-//   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+// app.use((req, res, next) => {
+//   res.setHeader('Access-Control-Allow-Origin', 'https://movie-gram.vercel.app');
+//   res.setHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
 //   next();
 // });
 
 app.use((req, res, next) => {
-  res.setHeader('Access-Control-Allow-Origin', 'https://movie-gram.vercel.app');
+  res.setHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
   next();
 });
 
