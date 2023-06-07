@@ -21,18 +21,18 @@ const app = express();
 // });
 
 // Making Local Changes
-const corsOptions = {
-    origin: 'http://localhost:3000',
-    credentials: true,
-    exposedHeaders: 'Access-Control-Allow-Credentials',
-};
+// const corsOptions = {
+//     origin: 'http://127.0.0.1:5173',
+//     credentials: true,
+//     exposedHeaders: 'Access-Control-Allow-Credentials',
+// };
 
 // Launching website
-// const corsOptions = {
-//   origin: 'https://movie-gram.vercel.app',
-//   credentials: true,
-//   exposedHeaders: 'Access-Control-Allow-Credentials',
-// };
+const corsOptions = {
+  origin: 'https://movie-gram.vercel.app',
+  credentials: true,
+  exposedHeaders: 'Access-Control-Allow-Credentials',
+};
 
 app.use(cookieParser());
 app.use(cors(corsOptions));
