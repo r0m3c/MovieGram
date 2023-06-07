@@ -31,7 +31,8 @@ app.use((req, res, next) => {
 const corsOptions = {
   origin: 'https://movie-gram.vercel.app',
   credentials: true,
-  exposedHeaders: 'Access-Control-Allow-Credentials',
+  // exposedHeaders: 'Access-Control-Allow-Credentials',
+  optionSuccessStatus:200,
 };
 
 app.use(cookieParser());
