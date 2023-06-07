@@ -14,11 +14,11 @@ dotenv.config();
 
 const app = express(); 
 
-// app.use((req, res, next) => {
-//   res.setHeader("Access-Control-Allow-Origin", "https://movie-gram.vercel.app", "https://moviegram-backend-production.up.railway.app");
-//   res.setHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-//   next();
-// });
+app.use((req, res, next) => {
+  res.setHeader("Access-Control-Allow-Origin", "https://movie-gram.vercel.app", "https://moviegram-backend-production.up.railway.app");
+  res.setHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  next();
+});
 
 // Making Local Changes
 // const corsOptions = {
