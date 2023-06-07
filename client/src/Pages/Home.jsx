@@ -7,7 +7,7 @@ import { AuthContext } from '../context/authContext';
 import styled from 'styled-components';
 import { faFilm, faEdit, faTrash, faEllipsisH } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import.meta.env;
+// import.meta.env;
 
 const MovieContainer = styled.div`
     padding-left: 10%;
