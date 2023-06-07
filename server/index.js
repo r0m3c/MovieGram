@@ -14,25 +14,25 @@ dotenv.config();
 
 const app = express(); 
 
-app.use((req, res, next) => {
-  res.setHeader("Access-Control-Allow-Origin", "https://movie-gram.vercel.app", "https://moviegram-backend-production.up.railway.app");
-  res.setHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-  next();
-});
+// app.use((req, res, next) => {
+//   res.setHeader("Access-Control-Allow-Origin", "https://movie-gram.vercel.app", "https://moviegram-backend-production.up.railway.app");
+//   res.setHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+//   next();
+// });
 
 // Making Local Changes
-// const corsOptions = {
-//     origin: 'http://127.0.0.1:5173',
-//     credentials: true,
-//     exposedHeaders: 'Access-Control-Allow-Credentials',
-// };
+const corsOptions = {
+    origin: 'http://127.0.0.1:5173',
+    credentials: true,
+    // exposedHeaders: 'Access-Control-Allow-Credentials',
+};
 
 // Launching website
-const corsOptions = {
-  origin: 'https://movie-gram.vercel.app',
-  credentials: true,
-  exposedHeaders: 'Access-Control-Allow-Credentials',
-};
+// const corsOptions = {
+//   origin: 'https://movie-gram.vercel.app',
+//   credentials: true,
+//   exposedHeaders: 'Access-Control-Allow-Credentials',
+// };
 
 app.use(cookieParser());
 app.use(cors(corsOptions));
