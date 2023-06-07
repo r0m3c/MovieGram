@@ -24,7 +24,7 @@ const app = express();
 const corsOptions = {
     origin: 'http://localhost:3000',
     credentials: true,
-    // exposedHeaders: 'Access-Control-Allow-Credentials',
+    exposedHeaders: 'Access-Control-Allow-Credentials',
 };
 
 // Launching website
