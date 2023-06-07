@@ -22,7 +22,7 @@ const app = express();
 
 // Making Local Changes
 const corsOptions = {
-    origin: 'http://127.0.0.1:5173',
+    origin: 'http://localhost:3000',
     credentials: true,
     // exposedHeaders: 'Access-Control-Allow-Credentials',
 };
