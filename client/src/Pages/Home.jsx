@@ -249,7 +249,7 @@ export default function Home() {
 
             <h2 style={{textAlign:"center"}}>MovieGram Posts</h2>
 
-            <p>{console.log(import.meta.env.VITE_BACKEND_URL)}</p>
+            {console.log(import.meta.env.VITE_BACKEND_URL)}
 
             {/* <div style={{paddingLeft:"20%", paddingRight:"20%"}}>
                 {movie.map((mov) => (
