@@ -9,6 +9,10 @@ import cookieParser from "cookie-parser";
 import multer from "multer";
 import exceljs from "exceljs";
 import dotenv from "dotenv"
+import { S3Client, PutObjectCommand, GetObjectCommand } from "@aws-sdk/client-s3";
+import crypto from "crypto"
+import sharp from "sharp"
+import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 
 dotenv.config();
 
@@ -53,15 +57,59 @@ const db = mysql2.createConnection(url);
 //   database: 'MovieGram'
 // });
 
+const randomImageName = (bytes = 32) => crypto.randomBytes(bytes).toString('hex');
+
+//aws-s3 signup
+const bucketName = process.env.BUCKET_NAME;
+const bucketRegion = process.env.BUCKET_REGION;
+const accessKey = process.env.ACCESS_KEY;
+const secretAccessKey = process.env.SECRET_ACCESS_KEY;
+
+const s3 = new S3Client({
+  credentials: {
+    accessKeyId: accessKey,
+    secretAccessKey: secretAccessKey,
+  },
+  region: bucketRegion
+})
+//
+
+const storage = multer.memoryStorage();
+const upload = multer({storage:storage});
+
 // Register
-app.post("/api/register", (req,res) => {
+app.post("/api/register", upload.single('image'), async (req,res) => {
+    // aws-s3 resize image
+    const buffer = await sharp(req.file.buffer).resize({height: 1920,width: 1080, fit: "contain"}).toBuffer();
+    //
+
     const email = req.body.email;
     const password = req.body.password;
     const username = req.body.username;
-    const img = req.body.img;
+    // const img = req.file.originalname;
     const date = new Date();
     const created_at = date.toISOString().slice(0, 19).replace('T', ' ');
     const bio = req.body.bio;
+    const img = randomImageName() // aws image
+    console.log(email);
+    console.log(password);
+    console.log(username);
+    console.log(date);
+    console.log(created_at);
+    console.log(bio);
+    console.log(img);
+
+    // aws-s3
+    const params = {
+      Bucket: bucketName,
+      Key: img,
+      Body: buffer,
+      ContentType:req.file.mimetype,
+    }
+    const command = new PutObjectCommand(params);
+
+    await s3.send(command);
+    //
 
     // check that all this info is never empty
     if (!email || !password || !username || !bio || !img) {
@@ -70,9 +118,6 @@ app.post("/api/register", (req,res) => {
 
     // check if a user exists
     const q = "SELECT * FROM users WHERE email = ? OR username = ?";
-    // print
-    console.log(email);
-    console.log(password);
 
     db.query(q,[email,username], (err,data) => {
         // if there is an error -> return error message
@@ -191,7 +236,7 @@ app.post("/api/login", (req, res) => {
   
     const q = "SELECT * from users WHERE username = ?";
   
-    db.query(q, [username], (err, data) => {
+    db.query(q, [username], async (err, data) => {
       // if there is an error -> return error message
       if (err) {
         return res.json(err);
@@ -208,13 +253,22 @@ app.post("/api/login", (req, res) => {
       if (!isPasswordCorrect) {
         return res.status(400).json("Wrong username or password");
       }
+
+      // aws-user-img
+      const getObjectParams = {
+        Bucket: bucketName,
+        Key:data[0].img,
+      }
+      const command = new GetObjectCommand(getObjectParams);
+      const url = await getSignedUrl(s3, command, { expiresIn: 3600 });
+      //
   
       const token = jwt.sign({ id: data[0].id }, "jwtkey");
       console.log(token);
       const { password: _, ...other } = data[0]; // Exclude password from response
   
       // Send the token as part of the response data
-      res.status(200).json({ ...other, token });
+      res.status(200).json({ ...other, token, url });
     });
   });
   
@@ -232,23 +286,22 @@ app.post("/api/logout", (req,res) => {
     res.status(200).json("User has logged out");
 });
 
-// image upload
-const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-      cb(null, '../client/public/uploads');
-    },
-    filename: function (req, file, cb) {
-      cb(null, Date.now()+file.originalname);
-    }
-})
+// image upload (old - using local uploads folder)
+// const storage = multer.diskStorage({
+//     destination: function (req, file, cb) {
+//       cb(null, '../client/public/uploads');
+//     },
+//     filename: function (req, file, cb) {
+//       cb(null, Date.now()+file.originalname);
+//     }
+// })
 
-const upload = multer({ storage });
+// const upload = multer({ storage });
 
-app.post('/api/upload', upload.single('file'), function (req, res) {
-    const file = req.file;
-    return res.status(200).json(file.filename);
-});
-
+// app.post('/api/upload', upload.single('file'), function (req, res) {
+//     const file = req.file;
+//     return res.status(200).json(file.filename);
+// });
 //
 
 // add movie (original)
