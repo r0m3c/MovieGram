@@ -66,6 +66,7 @@ const url = `mysql://${process.env.MYSQLUSER}:${process.env.MYSQLPASSWORD}@${pro
 // const urlDB = "mysql://root:OZNryeJgHmlKQgo30S49@containers-us-west-143.railway.app:7964/railway";
 const db = mysql2.createConnection(url);
 console.log(url);
+console.log(url);
 
 
 // const db = mysql.createConnection({
@@ -1604,7 +1605,8 @@ app.get("/api/watchlist/watched_count/:id", (req,res) => {
 //     console.log("running on port 2030");
 // })
 
-const port = process.env.MYSQLPORT;
+const port = process.env.MYSQLPORT || 3000;
+console.log(port);
 app.listen(port,"0.0.0.0", () => {
     console.log("running on port 7964");
 })
