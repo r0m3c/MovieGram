@@ -14,12 +14,6 @@ dotenv.config();
 
 const app = express(); 
 
-// app.use((req, res, next) => {
-//   res.setHeader("Access-Control-Allow-Origin", "https://movie-gram.vercel.app", "https://moviegram-backend-production.up.railway.app");
-//   res.setHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-//   next();
-// });
-
 // Making Local Changes
 // const corsOptions = {
 //     origin: 'http://127.0.0.1:5173',
@@ -40,19 +34,6 @@ app.use(express.json());
 app.use(bodyParser.urlencoded({extended:true}));
 //
 
-// app.use((req, res, next) => {
-//   res.setHeader("Access-Control-Allow-Origin", "https://movie-gram.vercel.app, https://moviegram-backend-production.up.railway.app");
-//   res.setHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-//   next();
-// });
-
-// app.use((req, res, next) => {
-//   res.setHeader("Access-Control-Allow-Origin", "https://movie-gram.vercel.app", "https://moviegram-backend-production.up.railway.app");
-//   res.setHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-//   next();
-// });
-
-
 // MySQL db connection: MySQLWorkBench
 // const db = mysql2.createConnection({
 //     host: 'localhost',
@@ -63,11 +44,7 @@ app.use(bodyParser.urlencoded({extended:true}));
 
 // Railway DB Connection
 const url = `mysql://${process.env.MYSQLUSER}:${process.env.MYSQLPASSWORD}@${process.env.MYSQLHOST}:${process.env.MYSQLPORT}/${process.env.MYSQLDATABASE}`
-// const urlDB = "mysql://root:OZNryeJgHmlKQgo30S49@containers-us-west-143.railway.app:7964/railway";
 const db = mysql2.createConnection(url);
-console.log(url);
-console.log(url);
-
 
 // const db = mysql.createConnection({
 //   host: '127.0.0.1',
@@ -1605,8 +1582,8 @@ app.get("/api/watchlist/watched_count/:id", (req,res) => {
 //     console.log("running on port 2030");
 // })
 
+// run when using Railway
 const port = process.env.PORT || 3000;
-console.log(port);
 app.listen(port,"0.0.0.0", () => {
     console.log(`running on port ${port}`);
 })
