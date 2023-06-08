@@ -90,7 +90,6 @@ const Register = () => {
     username:"",
     email:"",
     password:"",
-    img:"",
     bio:"",
   }); 
 
@@ -107,25 +106,35 @@ const Register = () => {
     setInputs(prev => ({...prev, [e.target.name]: e.target.value}));
   }
 
-  const upload = async() => {
-    try {
-      const formData = new FormData();
-      formData.append("file",newImg);
-      // const res = await Axios.post("http://localhost:2030/api/upload", formData);
-      const res = await Axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/upload`, formData);
-      return res.data;
-    } catch (err) {
-      console.log(err);
-    }
-  };
+  // image upload (old version - using local uploads folder)
+  // const upload = async() => {
+  //   try {
+  //     const formData = new FormData();
+  //     formData.append("file",newImg);
+
+  //     const res = await Axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/upload`, formData);
+  //     return res.data;
+  //   } catch (err) {
+  //     console.log(err);
+  //   }
+  // };
 
   const handleSumbit = async (e) => {
     e.preventDefault();
     try {
-      const imgURL = await upload();
+      // const imgURL = await upload();
+      const formData = new FormData();
+      formData.append("image",newImg);
+      formData.append("email", inputs.email);
+      formData.append("password", inputs.password);
+      formData.append("username", inputs.username);
+      formData.append("bio", inputs.bio);
       
       // await Axios.post("http://localhost:2030/api/register", { ...inputs, img: newImg ? imgURL : "" });
-      await Axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/register`, { ...inputs, img: newImg ? imgURL : "" });
+      // await Axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/register`, formData, { ...inputs});
+      await Axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/register`, formData, {
+        data: { ...inputs }, // Send inputs as the request payload
+      });
       navigate("/login");
     } catch(err) {
         setErr(err.response.data);
