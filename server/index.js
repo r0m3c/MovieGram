@@ -63,6 +63,7 @@ app.use(bodyParser.urlencoded({extended:true}));
 // });
 
 // Railway DB Connection
+const url = ``
 const urlDB = "mysql://root:OZNryeJgHmlKQgo30S49@containers-us-west-143.railway.app:7964/railway";
 const db = mysql2.createConnection(urlDB);
 
@@ -1599,6 +1600,6 @@ app.get("/api/watchlist/watched_count/:id", (req,res) => {
 });
 
 // run when working locally
-app.listen(2030, () => {
-    console.log("running on port 2030");
-})
+// app.listen(2030, () => {
+//     console.log("running on port 2030");
+// })
