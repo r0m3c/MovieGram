@@ -1602,3 +1602,8 @@ app.get("/api/watchlist/watched_count/:id", (req,res) => {
 // app.listen(2030, () => {
 //     console.log("running on port 2030");
 // })
+
+app.listen(7964, () => {
+    console.log("running on port 7964");
+})
+
