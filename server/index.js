@@ -1605,7 +1605,7 @@ app.get("/api/watchlist/watched_count/:id", (req,res) => {
 //     console.log("running on port 2030");
 // })
 
-const port = process.env.MYSQLPORT || 3000;
+const port = process.env.PORT || 3000;
 console.log(port);
 app.listen(port,"0.0.0.0", () => {
     console.log("running on port 7964");
