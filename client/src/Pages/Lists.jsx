@@ -154,7 +154,7 @@ export default function Lists() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await Axios.get("http://localhost:2030/api/lists/" + String(currentUser.id), {
+        const res = await Axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/lists/` + String(currentUser.id), {
           params: {
             search: searchQuery,
           },
@@ -182,7 +182,7 @@ export default function Lists() {
   const handleDelete = async (movieId) => {
     try {
         const token = localStorage.getItem('access_token');
-        await Axios.delete("http://localhost:2030/api/delete/"+String(movieId), {
+        await Axios.delete(`${import.meta.env.VITE_BACKEND_URL}/api/delete/`+String(movieId), {
           headers: {
             Authorization: token,
           }
@@ -220,7 +220,7 @@ export default function Lists() {
 
   const handleDownloadClickExcel = async () => {
     try {
-      const response = await Axios.get("http://localhost:2030/api/movie-dataa/" + String(currentUser.id), { responseType: 'blob' });
+      const response = await Axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/movie-dataa/` + String(currentUser.id), { responseType: 'blob' });
   
       // Create a blob URL for the Excel file
       const blobUrl = window.URL.createObjectURL(new Blob([response.data]));

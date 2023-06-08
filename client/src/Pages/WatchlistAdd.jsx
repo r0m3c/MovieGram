@@ -75,7 +75,7 @@ export default function WatchlistAdd() {
         console.log(language);
         const token = localStorage.getItem('access_token');
     
-        await Axios.post("http://localhost:2030/api/watchlist/add", {
+        await Axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/watchlist/add`, {
           movieName: movieName,
           year: year,
           language: language,

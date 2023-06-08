@@ -49,7 +49,7 @@ export default function EditWatchlist() {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const res = await Axios.get("http://localhost:2030/api/watchlist/movie/" + String(id), {withCredentials:true});
+                const res = await Axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/watchlist/movie/` + String(id), {withCredentials:true});
                 setFormData(res.data);
 
             } catch(err) {
@@ -66,7 +66,7 @@ export default function EditWatchlist() {
       
           const token = localStorage.getItem('access_token');
           await Axios.put(
-            "http://localhost:2030/api/update/watchlist/" + String(id),
+            `${import.meta.env.VITE_BACKEND_URL}/api/update/watchlist/` + String(id),
             { ...formData},
             {
               headers: {

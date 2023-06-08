@@ -56,7 +56,7 @@ export default function ReportPost() {
     
       try {
         const token = localStorage.getItem('access_token');
-        await Axios.post("http://localhost:2030/api/report/post/" + String(id), {
+        await Axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/report/post/` + String(id), {
           description: description,
           type: type,
         }, {

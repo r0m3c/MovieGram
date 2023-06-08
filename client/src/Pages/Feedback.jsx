@@ -57,7 +57,7 @@ export default function Feedback() {
         try {
           const token = localStorage.getItem('access_token');
           await Axios.post(
-            "http://localhost:2030/api/feedback",
+            `${import.meta.env.VITE_BACKEND_URL}/api/feedback`,
             {
               description: description,
               type: type,

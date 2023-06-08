@@ -40,7 +40,7 @@ export default function EditComment() {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const res = await Axios.get("http://localhost:2030/api/comment/get/" + String(id), {withCredentials:true});
+                const res = await Axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/comment/get/` + String(id), {withCredentials:true});
                 setFormData(res.data);
                 console.log(res.data);
             } catch(err) {
@@ -59,7 +59,7 @@ export default function EditComment() {
         try {
             const form = new FormData();
             form.append("file",newImg);
-            const res = await Axios.post("http://localhost:2030/api/upload", form);
+            const res = await Axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/upload`, form);
             return res.data;
         } catch (err) {
             console.log(err);
@@ -91,7 +91,7 @@ export default function EditComment() {
           const imgURL = await upload();
           const token = localStorage.getItem('access_token');
           await Axios.put(
-            "http://localhost:2030/api/comment/update/" + String(id),
+            `${import.meta.env.VITE_BACKEND_URL}/api/comment/update/` + String(id),
             { ...formData, img: newImg ? imgURL : "" },
             {
               headers: {

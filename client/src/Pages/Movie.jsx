@@ -54,7 +54,7 @@ export default function Movie() {
     try {
       const formData = new FormData();
       formData.append("file",img);
-      const res = await Axios.post("http://localhost:2030/api/upload", formData);
+      const res = await Axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/upload`, formData);
       return res.data;
     } catch (err) {
       console.log(err);
@@ -100,7 +100,7 @@ export default function Movie() {
     try {
       language = language.charAt(0).toUpperCase() + language.slice(1);
       const token = localStorage.getItem('access_token');
-      await Axios.post("http://localhost:2030/api/add", {
+      await Axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/add`, {
         movieName: movieName,
         movieReview: movieReview,
         director: director,

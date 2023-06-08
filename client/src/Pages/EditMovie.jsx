@@ -43,7 +43,7 @@ const EditMovie = (props) => {
   useEffect(() => {
     const fetchData = async () => {
         try {
-            const res = await Axios.get("http://localhost:2030/api/movie/" + String(id), {withCredentials:true});
+            const res = await Axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/movie/` + String(id), {withCredentials:true});
             setFormData(res.data);
             // console.log(res.data);
             // setImagePreview(URL.createObjectURL(res.data.img));
@@ -67,7 +67,7 @@ const EditMovie = (props) => {
     try {
       const form = new FormData();
       form.append("file",newImg);
-      const res = await Axios.post("http://localhost:2030/api/upload", form);
+      const res = await Axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/upload`, form);
       return res.data;
     } catch (err) {
       console.log(err);
@@ -105,7 +105,7 @@ const EditMovie = (props) => {
   
       const token = localStorage.getItem('access_token');
       await Axios.put(
-        "http://localhost:2030/api/update/" + String(id),
+        `${import.meta.env.VITE_BACKEND_URL}/api/update/` + String(id),
         { ...formData, img: newImg ? imgURL : "" },
         {
           headers: {

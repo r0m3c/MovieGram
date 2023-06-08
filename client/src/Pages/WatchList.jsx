@@ -113,17 +113,17 @@ export default function WatchList() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await Axios.get(`http://localhost:2030/api/your/watchlist/${currentUser.id}`, {
+        const res = await Axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/your/watchlist/${currentUser.id}`, {
           params: {
             search: searchQuery,
           },
         });
         setMovies(res.data);
 
-        const watchlistTotal = await Axios.get("http://localhost:2030/api/watched/total/movies/" + String(currentUser.id));
+        const watchlistTotal = await Axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/watched/total/movies/` + String(currentUser.id));
           setTotalWatchlist(watchlistTotal.data);
 
-        const watched_count = await Axios.get("http://localhost:2030/api/watchlist/watched_count/" + String(currentUser.id));
+        const watched_count = await Axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/watchlist/watched_count/` + String(currentUser.id));
         set_Count_watchlist_watched(watched_count.data);
       } catch (err) {
         console.log(err);
@@ -151,12 +151,12 @@ export default function WatchList() {
       });
       setMovies(updatedMovies);
 
-      await Axios.put("http://localhost:2030/api/watchlist/update/watched/"+String(movieId), { watched: !movies.find(movie => movie.id === movieId).watched });
+      await Axios.put(`${import.meta.env.VITE_BACKEND_URL}/api/watchlist/update/watched/`+String(movieId), { watched: !movies.find(movie => movie.id === movieId).watched });
 
-      const watchlistTotal = await Axios.get("http://localhost:2030/api/watched/total/movies/" + String(currentUser.id));
+      const watchlistTotal = await Axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/watched/total/movies/` + String(currentUser.id));
           setTotalWatchlist(watchlistTotal.data);
 
-      const watched_count = await Axios.get("http://localhost:2030/api/watchlist/watched_count/" + String(currentUser.id));
+      const watched_count = await Axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/watchlist/watched_count/` + String(currentUser.id));
       set_Count_watchlist_watched(watched_count.data);
     } catch (err) {
       console.log(err);
@@ -169,7 +169,7 @@ export default function WatchList() {
 
   const handleDownloadClickExcel = async () => {
     try {
-      const response = await Axios.get("http://localhost:2030/api/movie-watchlist-data/" + String(currentUser.id), { responseType: 'blob' });
+      const response = await Axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/movie-watchlist-data/` + String(currentUser.id), { responseType: 'blob' });
   
       // Create a blob URL for the Excel file
       const blobUrl = window.URL.createObjectURL(new Blob([response.data]));
@@ -191,7 +191,7 @@ export default function WatchList() {
   const handleWatchlistMovieDelete = async (movieId) => {
     try {
       const token = localStorage.getItem('access_token');
-      await Axios.delete("http://localhost:2030/api/watchlist/delete/" + String(movieId), {
+      await Axios.delete(`${import.meta.env.VITE_BACKEND_URL}/api/watchlist/delete/` + String(movieId), {
         headers: {
           Authorization: token,
         }

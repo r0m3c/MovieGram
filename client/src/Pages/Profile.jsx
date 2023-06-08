@@ -34,37 +34,37 @@ export default function Profile(props) {
     useEffect(() => {
       const fetchData = async () => {
         try {
-          const res = await Axios.get("http://localhost:2030/api/user/" + String(id));
+          const res = await Axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/user/` + String(id));
           setUser(res.data);
 
-          const totalWatched = await Axios.get("http://localhost:2030/api/total/movies/" + String(id));
+          const totalWatched = await Axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/total/movies/` + String(id));
           setTotalMoviesWatched(totalWatched.data);
           
-          const ratingAvg = await Axios.get("http://localhost:2030/api/avg/movies/" + String(id));
+          const ratingAvg = await Axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/avg/movies/` + String(id));
           setAvgRating(ratingAvg.data);
 
-          const countCategory = await Axios.get("http://localhost:2030/api/count/category/movies/" + String(id));
+          const countCategory = await Axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/count/category/movies/` + String(id));
           setMoviesByCategory(countCategory.data);
 
-          const countLanguage = await Axios.get("http://localhost:2030/api/count/language/movies/" + String(id));
+          const countLanguage = await Axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/count/language/movies/` + String(id));
           setMoviesByLanguage(countLanguage.data);
 
-          const currentReports = await Axios.get("http://localhost:2030/api/current/reports/" + String(id));
+          const currentReports = await Axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/current/reports/` + String(id));
           setReports(currentReports.data);
 
-          const yourReport = await Axios.get("http://localhost:2030/api/your/reported/"+String(id));
+          const yourReport = await Axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/your/reported/`+String(id));
           setYourReported(yourReport.data);
 
-          const yourFeedback = await Axios.get("http://localhost:2030/api/your/feedback/"+String(id));
+          const yourFeedback = await Axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/your/feedback/`+String(id));
           setYourFeedback(yourFeedback.data);
 
-          const watchlistTotal = await Axios.get("http://localhost:2030/api/watched/total/movies/" + String(id));
+          const watchlistTotal = await Axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/watched/total/movies/` + String(id));
           setTotalWatchlist(watchlistTotal.data);
 
-          const countWatchlistLanguage = await Axios.get("http://localhost:2030/api/count/language/watched/movies/" + String(id));
+          const countWatchlistLanguage = await Axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/count/language/watched/movies/` + String(id));
           setMoviesByLanguageWatchlist(countWatchlistLanguage.data)
 
-          const watched_count = await Axios.get("http://localhost:2030/api/watchlist/watched_count/" + String(id));
+          const watched_count = await Axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/watchlist/watched_count/` + String(id));
           set_Count_watchlist_watched(watched_count.data);
 
         } catch (err) {
@@ -93,7 +93,7 @@ export default function Profile(props) {
 
     const handleDownloadClickExcel = async () => {
       try {
-        const response = await Axios.get("http://localhost:2030/api/movie-dataa/" + String(id), { responseType: 'blob' });
+        const response = await Axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/movie-dataa/` + String(id), { responseType: 'blob' });
     
         // Create a blob URL for the Excel file
         const blobUrl = window.URL.createObjectURL(new Blob([response.data]));
@@ -114,7 +114,7 @@ export default function Profile(props) {
 
     const handleDownloadClickExcelWatchlist = async () => {
       try {
-        const response = await Axios.get("http://localhost:2030/api/movie-watchlist-data/" + String(currentUser.id), { responseType: 'blob' });
+        const response = await Axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/movie-watchlist-data/` + String(currentUser.id), { responseType: 'blob' });
     
         // Create a blob URL for the Excel file
         const blobUrl = window.URL.createObjectURL(new Blob([response.data]));
