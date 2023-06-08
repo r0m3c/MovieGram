@@ -93,13 +93,6 @@ app.post("/api/register", upload.single('image'), async (req,res) => {
     const created_at = date.toISOString().slice(0, 19).replace('T', ' ');
     const bio = req.body.bio;
     const img = randomImageName() // aws image
-    console.log(email);
-    console.log(password);
-    console.log(username);
-    console.log(date);
-    console.log(created_at);
-    console.log(bio);
-    console.log(img);
 
     // aws-s3
     const params = {
