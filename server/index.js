@@ -19,18 +19,18 @@ dotenv.config();
 const app = express(); 
 
 // Making Local Changes
-// const corsOptions = {
-//     origin: 'http://127.0.0.1:5173',
-//     credentials: true,
-//     exposedHeaders: 'Access-Control-Allow-Credentials',
-// };
+const corsOptions = {
+    origin: 'http://127.0.0.1:5173',
+    credentials: true,
+    exposedHeaders: 'Access-Control-Allow-Credentials',
+};
 
 // Launching Vercel website
-const corsOptions = {
-  origin: 'https://movie-gram.vercel.app',
-  credentials: true,
-  exposedHeaders: 'Access-Control-Allow-Credentials',
-};
+// const corsOptions = {
+//   origin: 'https://movie-gram.vercel.app',
+//   credentials: true,
+//   exposedHeaders: 'Access-Control-Allow-Credentials',
+// };
 
 app.use(cookieParser());
 app.use(cors(corsOptions));
@@ -39,16 +39,16 @@ app.use(bodyParser.urlencoded({extended:true}));
 //
 
 // MySQL db connection: MySQLWorkBench
-// const db = mysql2.createConnection({
-//     host: 'localhost',
-//     user: 'root',
-//     password: 'Leocool99!',
-//     database: 'MovieGram'
-// });
+const db = mysql2.createConnection({
+    host: 'localhost',
+    user: 'root',
+    password: 'Leocool99!',
+    database: 'MovieGram'
+});
 
 // Railway DB Connection
-const url = `mysql://${process.env.MYSQLUSER}:${process.env.MYSQLPASSWORD}@${process.env.MYSQLHOST}:${process.env.MYSQLPORT}/${process.env.MYSQLDATABASE}`
-const db = mysql2.createConnection(url);
+// const url = `mysql://${process.env.MYSQLUSER}:${process.env.MYSQLPASSWORD}@${process.env.MYSQLHOST}:${process.env.MYSQLPORT}/${process.env.MYSQLDATABASE}`
+// const db = mysql2.createConnection(url);
 
 // const db = mysql.createConnection({
 //   host: '127.0.0.1',
@@ -1653,13 +1653,13 @@ app.get("/api/watchlist/watched_count/:id", (req,res) => {
 });
 
 // run when working locally
-// app.listen(2030, () => {
-//     console.log("running on port 2030");
-// })
+app.listen(2030, () => {
+    console.log("running on port 2030");
+})
 
 // run when using Railway
-const port = process.env.PORT || 3000;
-app.listen(port,"0.0.0.0", () => {
-    console.log(`running on port ${port}`);
-})
+// const port = process.env.PORT || 3000;
+// app.listen(port,"0.0.0.0", () => {
+//     console.log(`running on port ${port}`);
+// })
 
