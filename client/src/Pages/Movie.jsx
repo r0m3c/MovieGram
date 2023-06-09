@@ -50,16 +50,17 @@ export default function Movie() {
 
     // const navigate = useNavigate();
 
-  const upload = async() => {
-    try {
-      const formData = new FormData();
-      formData.append("file",img);
-      const res = await Axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/upload`, formData);
-      return res.data;
-    } catch (err) {
-      console.log(err);
-    }
-  };
+  // old image upload
+  // const upload = async() => {
+  //   try {
+  //     const formData = new FormData();
+  //     formData.append("file",img);
+  //     const res = await Axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/upload`, formData);
+  //     return res.data;
+  //   } catch (err) {
+  //     console.log(err);
+  //   }
+  // };
   
   // original
   // const submitMovie = async (e) => {
@@ -91,25 +92,28 @@ export default function Movie() {
   // new
   const submitMovie = async (e) => {
     e.preventDefault();
-    let imgURL;
-    if (img) {
-      imgURL = await upload();
-      console.log(imgURL);
-    }
+    // let imgURL;
+    // if (img) {
+    //   imgURL = await upload();
+    //   console.log(imgURL);
+    // }
   
     try {
+
+      const formData = new FormData();
+      formData.append("image",img);
+      formData.append("movieName", movieName);
+      formData.append("movieReview", movieReview);
+      formData.append("director", director);
+      formData.append("language", language.charAt(0).toUpperCase() + language.slice(1));
+      formData.append("rating", rating);
+      formData.append("category", category);
+      formData.append("date", formattedDate);
+
       language = language.charAt(0).toUpperCase() + language.slice(1);
       const token = localStorage.getItem('access_token');
-      await Axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/add`, {
-        movieName: movieName,
-        movieReview: movieReview,
-        director: director,
-        language: language,
-        rating: rating,
-        category: category,
-        date: formattedDate,
-        img: img ? imgURL : "",
-      }, {
+      console.log(token);
+      await Axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/add`, formData, {
         headers: {
           Authorization: token
         }

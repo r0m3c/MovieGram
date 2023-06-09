@@ -19,18 +19,18 @@ dotenv.config();
 const app = express(); 
 
 // Making Local Changes
-// const corsOptions = {
-//     origin: 'http://127.0.0.1:5173',
-//     credentials: true,
-//     exposedHeaders: 'Access-Control-Allow-Credentials',
-// };
+const corsOptions = {
+    origin: 'http://127.0.0.1:5173',
+    credentials: true,
+    exposedHeaders: 'Access-Control-Allow-Credentials',
+};
 
 // Launching website
-const corsOptions = {
-  origin: 'https://movie-gram.vercel.app',
-  credentials: true,
-  exposedHeaders: 'Access-Control-Allow-Credentials',
-};
+// const corsOptions = {
+//   origin: 'https://movie-gram.vercel.app',
+//   credentials: true,
+//   exposedHeaders: 'Access-Control-Allow-Credentials',
+// };
 
 app.use(cookieParser());
 app.use(cors(corsOptions));
@@ -39,16 +39,16 @@ app.use(bodyParser.urlencoded({extended:true}));
 //
 
 // MySQL db connection: MySQLWorkBench
-// const db = mysql2.createConnection({
-//     host: 'localhost',
-//     user: 'root',
-//     password: 'Leocool99!',
-//     database: 'MovieGram'
-// });
+const db = mysql2.createConnection({
+    host: 'localhost',
+    user: 'root',
+    password: 'Leocool99!',
+    database: 'MovieGram'
+});
 
 // Railway DB Connection
-const url = `mysql://${process.env.MYSQLUSER}:${process.env.MYSQLPASSWORD}@${process.env.MYSQLHOST}:${process.env.MYSQLPORT}/${process.env.MYSQLDATABASE}`
-const db = mysql2.createConnection(url);
+// const url = `mysql://${process.env.MYSQLUSER}:${process.env.MYSQLPASSWORD}@${process.env.MYSQLHOST}:${process.env.MYSQLPORT}/${process.env.MYSQLDATABASE}`
+// const db = mysql2.createConnection(url);
 
 // const db = mysql.createConnection({
 //   host: '127.0.0.1',
@@ -159,9 +159,21 @@ app.get("/api/movies", (req,res) => {
     // const q = "SELECT movie.id, movie.movieName,movie.uid, movie.director, movie.language, movie.movieReview, movie.rating, movie.img, movie.category, users.username, movie.date FROM movie INNER JOIN users ON movie.uid = users.id"
     const q = "SELECT movie.id, movie.movieName,movie.uid, movie.director, movie.language, movie.movieReview, movie.rating, movie.img, movie.category, users.username, users.img AS userImg, movie.date FROM movie INNER JOIN users ON movie.uid = users.id ORDER BY movie.date DESC";
 
-    db.query(q, (err,data) => {
+    db.query(q, async (err,data) => {
         if (err) {
             return res.status(500).json(err);
+        }
+
+        for(const movie of data) {
+          // aws-user-img
+          const getObjectParams = {
+            Bucket: bucketName,
+            Key: movie.img,
+          }
+          const command = new GetObjectCommand(getObjectParams);
+          const url = await getSignedUrl(s3, command, { expiresIn: 604700 });
+          movie.imgUrl = url;
+          //
         }
 
         return res.status(200).json(data);
@@ -256,7 +268,7 @@ app.post("/api/login", (req, res) => {
         Key:data[0].img,
       }
       const command = new GetObjectCommand(getObjectParams);
-      const url = await getSignedUrl(s3, command, { expiresIn: 3600 });
+      const url = await getSignedUrl(s3, command, { expiresIn: 604700 });
       //
   
       const token = jwt.sign({ id: data[0].id }, "jwtkey");
@@ -338,24 +350,47 @@ app.post("/api/logout", (req,res) => {
 // });
 
 // add movie (new - using local storage)
-app.post("/api/add", (req, res) => {
+app.post("/api/add", upload.single('image'), async (req, res) => {
+
     const token = req.headers.authorization;
-  
+    console.log(token);
     if (!token) {
       return res.status(401).json("Not authenticated");
     }
   
-    jwt.verify(token, "jwtkey", (err, userInfo) => {
+    jwt.verify(token, "jwtkey", async (err, userInfo) => {
       if (err) {
         return res.status(403).json("Token is not valid");
       }
+
+      console.log(req.body.movieName, "movie");
+
+      // aws-s3 resize image
+      const buffer = await sharp(req.file.buffer).resize({height: 1920,width: 1080, fit: "contain"}).toBuffer();
+      //
+
+      const img = randomImageName() // aws image
+
+      // aws-s3
+      const params = {
+        Bucket: bucketName,
+        Key: img,
+        Body: buffer,
+        ContentType:req.file.mimetype,
+      }
+      const command = new PutObjectCommand(params);
+
+      await s3.send(command);
+      //
   
       const q = "INSERT INTO movie(movieName, movieReview, img, rating, director, language, uid, date, category) VALUES (?)";
+
+      console.log(req.body.movieName);
   
       const values = [
         req.body.movieName,
         req.body.movieReview,
-        req.body.img,
+        img,
         req.body.rating,
         req.body.director,
         req.body.language,
@@ -1627,13 +1662,13 @@ app.get("/api/watchlist/watched_count/:id", (req,res) => {
 });
 
 // run when working locally
-// app.listen(2030, () => {
-//     console.log("running on port 2030");
-// })
+app.listen(2030, () => {
+    console.log("running on port 2030");
+})
 
 // run when using Railway
-const port = process.env.PORT || 3000;
-app.listen(port,"0.0.0.0", () => {
-    console.log(`running on port ${port}`);
-})
+// const port = process.env.PORT || 3000;
+// app.listen(port,"0.0.0.0", () => {
+//     console.log(`running on port ${port}`);
+// })
 
