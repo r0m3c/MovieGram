@@ -19,18 +19,18 @@ dotenv.config();
 const app = express(); 
 
 // Making Local Changes
-// const corsOptions = {
-//     origin: 'http://127.0.0.1:5173',
-//     credentials: true,
-//     exposedHeaders: 'Access-Control-Allow-Credentials',
-// };
-
-// Launching website
 const corsOptions = {
-  origin: 'https://movie-gram.vercel.app',
-  credentials: true,
-  exposedHeaders: 'Access-Control-Allow-Credentials',
+    origin: 'http://127.0.0.1:5173',
+    credentials: true,
+    exposedHeaders: 'Access-Control-Allow-Credentials',
 };
+
+// Launching Vercel website
+// const corsOptions = {
+//   origin: 'https://movie-gram.vercel.app',
+//   credentials: true,
+//   exposedHeaders: 'Access-Control-Allow-Credentials',
+// };
 
 app.use(cookieParser());
 app.use(cors(corsOptions));
@@ -39,16 +39,16 @@ app.use(bodyParser.urlencoded({extended:true}));
 //
 
 // MySQL db connection: MySQLWorkBench
-// const db = mysql2.createConnection({
-//     host: 'localhost',
-//     user: 'root',
-//     password: 'Leocool99!',
-//     database: 'MovieGram'
-// });
+const db = mysql2.createConnection({
+    host: 'localhost',
+    user: 'root',
+    password: 'Leocool99!',
+    database: 'MovieGram'
+});
 
 // Railway DB Connection
-const url = `mysql://${process.env.MYSQLUSER}:${process.env.MYSQLPASSWORD}@${process.env.MYSQLHOST}:${process.env.MYSQLPORT}/${process.env.MYSQLDATABASE}`
-const db = mysql2.createConnection(url);
+// const url = `mysql://${process.env.MYSQLUSER}:${process.env.MYSQLPASSWORD}@${process.env.MYSQLHOST}:${process.env.MYSQLPORT}/${process.env.MYSQLDATABASE}`
+// const db = mysql2.createConnection(url);
 
 // const db = mysql.createConnection({
 //   host: '127.0.0.1',
@@ -95,7 +95,7 @@ app.post("/api/register", upload.single('image'), async (req,res) => {
     const bio = req.body.bio;
     const img = randomImageName() // aws image
 
-    // aws-s3
+    // aws-s3 - send image to aws
     const params = {
       Bucket: bucketName,
       Key: img,
@@ -115,15 +115,20 @@ app.post("/api/register", upload.single('image'), async (req,res) => {
     // check if a user exists
     const q = "SELECT * FROM users WHERE email = ? OR username = ?";
 
-    db.query(q,[email,username], (err,data) => {
+    db.query(q,[email,username], async (err,data) => {
         // if there is an error -> return error message
         console.log(err);
         if (err) {
             return res.json(err);
         }
 
-        console.log(email);
-        console.log(password);
+        const getObjectParams = {
+          Bucket: bucketName,
+          Key: img,
+        }
+
+        const getSignedUrlCommand = new GetObjectCommand(getObjectParams);
+        const signedUrl = await getSignedUrl(s3, getSignedUrlCommand, { expiresIn: 3600 }); 
 
         // if there is data -> return message saying user exists
         if (data.length > 0) {
@@ -137,7 +142,7 @@ app.post("/api/register", upload.single('image'), async (req,res) => {
             username,
             email,
             hash,
-            img,
+            signedUrl,
             bio,
             created_at,
         ]
@@ -162,18 +167,6 @@ app.get("/api/movies", (req,res) => {
     db.query(q, async (err,data) => {
         if (err) {
             return res.status(500).json(err);
-        }
-
-        for(const movie of data) {
-          // aws-user-img
-          const getObjectParams = {
-            Bucket: bucketName,
-            Key: movie.img,
-          }
-          const command = new GetObjectCommand(getObjectParams);
-          const url = await getSignedUrl(s3, command, { expiresIn: 604700 });
-          movie.imgUrl = url;
-          //
         }
 
         return res.status(200).json(data);
@@ -261,22 +254,12 @@ app.post("/api/login", (req, res) => {
       if (!isPasswordCorrect) {
         return res.status(400).json("Wrong username or password");
       }
-
-      // aws-user-img
-      const getObjectParams = {
-        Bucket: bucketName,
-        Key:data[0].img,
-      }
-      const command = new GetObjectCommand(getObjectParams);
-      const url = await getSignedUrl(s3, command, { expiresIn: 604700 });
-      //
   
       const token = jwt.sign({ id: data[0].id }, "jwtkey");
-      console.log(token);
       const { password: _, ...other } = data[0]; // Exclude password from response
   
       // Send the token as part of the response data
-      res.status(200).json({ ...other, token, url });
+      res.status(200).json({ ...other, token });
     });
   });
   
@@ -350,7 +333,7 @@ app.post("/api/logout", (req,res) => {
 // });
 
 // add movie (new - using local storage)
-app.post("/api/add", upload.single('image'), async (req, res) => {
+app.post("/api/add", upload.single('image'), (req, res) => {
 
     const token = req.headers.authorization;
     console.log(token);
@@ -381,16 +364,24 @@ app.post("/api/add", upload.single('image'), async (req, res) => {
       const command = new PutObjectCommand(params);
 
       await s3.send(command);
+
+      const getObjectParams = {
+        Bucket: bucketName,
+        Key: img,
+      }
+
+      const getSignedUrlCommand = new GetObjectCommand(getObjectParams);
+      const signedUrl = await getSignedUrl(s3, getSignedUrlCommand, { expiresIn: 3600 }); 
       //
   
       const q = "INSERT INTO movie(movieName, movieReview, img, rating, director, language, uid, date, category) VALUES (?)";
 
-      console.log(req.body.movieName);
+      console.log(signedUrl);
   
       const values = [
         req.body.movieName,
         req.body.movieReview,
-        img,
+        signedUrl,
         req.body.rating,
         req.body.director,
         req.body.language,
@@ -1662,13 +1653,13 @@ app.get("/api/watchlist/watched_count/:id", (req,res) => {
 });
 
 // run when working locally
-// app.listen(2030, () => {
-//     console.log("running on port 2030");
-// })
+app.listen(2030, () => {
+    console.log("running on port 2030");
+})
 
 // run when using Railway
-const port = process.env.PORT || 3000;
-app.listen(port,"0.0.0.0", () => {
-    console.log(`running on port ${port}`);
-})
+// const port = process.env.PORT || 3000;
+// app.listen(port,"0.0.0.0", () => {
+//     console.log(`running on port ${port}`);
+// })
 
