@@ -370,7 +370,7 @@ export default function Home() {
                             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                                 <div style={{ flex: "1 0 100px" }}>
                                     <ImageContainer>
-                                        {mov.imgUrl && <UserIMG style={{border: '2px solid white'}} src={String(mov.imgUrl)} />}
+                                        {mov.img && <UserIMG style={{border: '2px solid white'}} src={mov.img} />}
                                     </ImageContainer>
                                 </div>
                                 <div style={{ flex: "1" }}>

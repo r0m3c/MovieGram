@@ -139,7 +139,7 @@ export default function Navbar() {
               {currentUser && currentUser.img ? (
                 <LogoImg
                   className="logoImg"
-                  src={String(currentUser.url)}
+                  src={String(currentUser.img)}
                   onClick={handleUserImgClick}
                 />
               ) : (
