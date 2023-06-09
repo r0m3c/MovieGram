@@ -352,7 +352,7 @@ export default function Home() {
                             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                                 <div style={{ display: "flex", alignItems: "center" }}>
                                     <Link to={"/profile/" + String(mov.uid)}>
-                                        <MovieUserImg src={"./uploads/" + String(mov.userImg)} />
+                                        <MovieUserImg src={String(mov.userImg)} />
                                         <MovieUserName><b>{mov.username}</b></MovieUserName>
                                     </Link>
                                 </div>
@@ -370,7 +370,7 @@ export default function Home() {
                             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                                 <div style={{ flex: "1 0 100px" }}>
                                     <ImageContainer>
-                                        {mov.img && <UserIMG style={{border: '2px solid white'}} src={"./uploads/" + String(mov.img)} />}
+                                        {mov.imgUrl && <UserIMG style={{border: '2px solid white'}} src={String(mov.imgUrl)} />}
                                     </ImageContainer>
                                 </div>
                                 <div style={{ flex: "1" }}>
