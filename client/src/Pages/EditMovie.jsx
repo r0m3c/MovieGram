@@ -112,8 +112,6 @@ const EditMovie = (props) => {
       updatedFormData.append("language", formData.language);
       updatedFormData.append("category", formData.category);
       updatedFormData.append("image", newImg);
-      console.log(updatedFormData);
-      console.log(newImg);
   
       const token = localStorage.getItem('access_token');
       await Axios.put(

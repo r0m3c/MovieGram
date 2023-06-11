@@ -65,16 +65,16 @@ export default function EditProfile() {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     }
     
-    const upload = async() => {
-        try {
-            const form = new FormData();
-            form.append("file",newImg);
-            const res = await Axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/upload`, form);
-            return res.data;
-        } catch (err) {
-            console.log(err);
-        }
-    };
+    // const upload = async() => {
+    //     try {
+    //         const form = new FormData();
+    //         form.append("file",newImg);
+    //         const res = await Axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/upload`, form);
+    //         return res.data;
+    //     } catch (err) {
+    //         console.log(err);
+    //     }
+    // };
 
     // original
     // const submitEdit = async (e) => {
@@ -98,11 +98,17 @@ export default function EditProfile() {
     const submitEdit = async (e) => {
         try {
           e.preventDefault();
-          const imgURL = await upload();
+        //   const imgURL = await upload();
+
+          const updatedFormData = new FormData();
+          updatedFormData.append("image", newImg);
+          updatedFormData.append("username", formData.username);
+          updatedFormData.append("bio", formData.bio);
+
           const token = localStorage.getItem("access_token");
           await Axios.put(
             `${import.meta.env.VITE_BACKEND_URL}/api/update/user/` + String(id),
-            { ...formData, img: newImg ? imgURL : "" },
+            updatedFormData,
             {
               headers: {
                 Authorization: token, // Replace <token> with your actual token
