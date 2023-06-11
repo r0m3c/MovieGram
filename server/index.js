@@ -19,18 +19,18 @@ dotenv.config();
 const app = express(); 
 
 // Making Local Changes
-// const corsOptions = {
-//     origin: 'http://127.0.0.1:5173',
-//     credentials: true,
-//     exposedHeaders: 'Access-Control-Allow-Credentials',
-// };
+const corsOptions = {
+    origin: 'http://127.0.0.1:5173',
+    credentials: true,
+    exposedHeaders: 'Access-Control-Allow-Credentials',
+};
 
 // Launching Vercel website
-const corsOptions = {
-  origin: 'https://movie-gram.vercel.app',
-  credentials: true,
-  exposedHeaders: 'Access-Control-Allow-Credentials',
-};
+// const corsOptions = {
+//   origin: 'https://movie-gram.vercel.app',
+//   credentials: true,
+//   exposedHeaders: 'Access-Control-Allow-Credentials',
+// };
 
 app.use(cookieParser());
 app.use(cors(corsOptions));
@@ -39,16 +39,16 @@ app.use(bodyParser.urlencoded({extended:true}));
 //
 
 // MySQL db connection: MySQLWorkBench
-// const db = mysql2.createConnection({
-//     host: 'localhost',
-//     user: 'root',
-//     password: 'Leocool99!',
-//     database: 'MovieGram'
-// });
+const db = mysql2.createConnection({
+    host: 'localhost',
+    user: 'root',
+    password: 'Leocool99!',
+    database: 'MovieGram'
+});
 
 // Railway DB Connection
-const url = `mysql://${process.env.MYSQLUSER}:${process.env.MYSQLPASSWORD}@${process.env.MYSQLHOST}:${process.env.MYSQLPORT}/${process.env.MYSQLDATABASE}`
-const db = mysql2.createConnection(url);
+// const url = `mysql://${process.env.MYSQLUSER}:${process.env.MYSQLPASSWORD}@${process.env.MYSQLHOST}:${process.env.MYSQLPORT}/${process.env.MYSQLDATABASE}`
+// const db = mysql2.createConnection(url);
 
 // const db = mysql.createConnection({
 //   host: '127.0.0.1',
@@ -847,7 +847,7 @@ app.post('/api/add/comments/:id', upload.single('image'), async (req, res) => {
 //             return res.status(403).json("Token is not valid");
 //         }
 //         const commentId = req.params.id;
-//         const q = "DELETE FROM comments WHERE id = ? AND user_id = ?";
+//         const q = "DELETE FROM Comments WHERE id = ? AND user_id = ?";
 
 //         db.query(q,[commentId,userInfo.id], (err,data) => {
 //             if(err) {
@@ -872,7 +872,7 @@ app.delete("/api/comment/delete/:id", (req, res) => {
         return res.status(403).json("Token is not valid");
       }
       const commentId = req.params.id;
-      const q = "DELETE FROM comments WHERE id = ? AND user_id = ?";
+      const q = "DELETE FROM Comments WHERE id = ? AND user_id = ?";
   
       db.query(q, [commentId, userInfo.id], (err, data) => {
         if (err) {
@@ -890,10 +890,10 @@ app.get("/api/comment/get/:id", (req,res) => {
     const id = req.params.id;
 
     const q = `
-        SELECT comments.*, users.username, users.img AS userImg 
-        FROM comments 
-        JOIN users ON comments.user_id = users.id 
-        WHERE comments.id = ?`;
+        SELECT Comments.*, users.username, users.img AS userImg 
+        FROM Comments 
+        JOIN users ON Comments.user_id = users.id 
+        WHERE Comments.id = ?`;
     
         // const q = `
         // SELECT comments.*, users.username, users.img AS useImg 
@@ -971,7 +971,7 @@ app.put("/api/comment/update/:id", (req, res) => {
       }
       const { description, img } = req.body;
   
-      let q = "UPDATE comments SET";
+      let q = "UPDATE Comments SET";
       let values = [];
   
       if (description) {
@@ -1656,13 +1656,13 @@ app.get("/api/watchlist/watched_count/:id", (req,res) => {
 });
 
 // run when working locally
-// app.listen(2030, () => {
-//     console.log("running on port 2030");
-// })
+app.listen(2030, () => {
+    console.log("running on port 2030");
+})
 
 // run when using Railway
-const port = process.env.PORT || 3000;
-app.listen(port,"0.0.0.0", () => {
-    console.log(`running on port ${port}`);
-})
+// const port = process.env.PORT || 3000;
+// app.listen(port,"0.0.0.0", () => {
+//     console.log(`running on port ${port}`);
+// })
 
