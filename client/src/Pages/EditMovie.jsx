@@ -27,8 +27,8 @@ const EditMovie = (props) => {
   const [formData, setFormData] = useState({
     movieName: "",
     movieReview: "",
-    img:"",
     rating: "",
+    img: "",
     director:"",
     language:"",
     category: "",
@@ -57,22 +57,22 @@ const EditMovie = (props) => {
     // setFormData({...formData, img: newImg ? imgURL : "" });
   }, [id]);
 
-  const { movieName, movieReview, img, rating, director,language, category } = formData;
+  const { movieName, movieReview, rating, img, director,language, category } = formData;
 
   const onChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   }
 
-  const upload = async() => {
-    try {
-      const form = new FormData();
-      form.append("file",newImg);
-      const res = await Axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/upload`, form);
-      return res.data;
-    } catch (err) {
-      console.log(err);
-    }
-  };
+  // const upload = async() => {
+  //   try {
+  //     const form = new FormData();
+  //     form.append("file",newImg);
+  //     const res = await Axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/upload`, form);
+  //     return res.data;
+  //   } catch (err) {
+  //     console.log(err);
+  //   }
+  // };
 
   // original
   // const submitEdit = async (e) => {
@@ -96,17 +96,29 @@ const EditMovie = (props) => {
   const submitEdit = async (e) => {
     try {
       e.preventDefault();
-      // const imgURL = await upload();
-      let imgURL;
-      if (img) {
-        imgURL = await upload();
-        console.log(imgURL);
-      }
+      // let imgURL;
+      // if (img) {
+      //   imgURL = await upload();
+      //   console.log(imgURL);
+      // }
+
+      // const formData2 = new FormData();
+      // formData.append("image",newImg);
+      const updatedFormData = new FormData();
+      updatedFormData.append("movieName", formData.movieName);
+      updatedFormData.append("movieReview", formData.movieReview);
+      updatedFormData.append("rating", formData.rating);
+      updatedFormData.append("director", formData.director);
+      updatedFormData.append("language", formData.language);
+      updatedFormData.append("category", formData.category);
+      updatedFormData.append("image", newImg);
+      console.log(updatedFormData);
+      console.log(newImg);
   
       const token = localStorage.getItem('access_token');
       await Axios.put(
         `${import.meta.env.VITE_BACKEND_URL}/api/update/` + String(id),
-        { ...formData, img: newImg ? imgURL : "" },
+        updatedFormData,
         {
           headers: {
             Authorization: token,

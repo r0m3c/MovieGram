@@ -469,7 +469,7 @@ app.post("/api/add", upload.single('image'), (req, res) => {
 // });
 
 // update a movie (new)
-app.put("/api/update/:movieId", (req, res) => {
+app.put("/api/update/:movieId", upload.single('image'), (req, res) => {
     const token = req.headers.authorization;
     
     if (!token) {
@@ -478,12 +478,12 @@ app.put("/api/update/:movieId", (req, res) => {
     
     const movieId = req.params.movieId;
   
-    jwt.verify(token, "jwtkey", (err, userInfo) => {
+    jwt.verify(token, "jwtkey", async (err, userInfo) => {
       if (err) {
         return res.status(403).json("Token is not valid");
       }
       
-      const { movieName, movieReview, img, rating, director, language, category } = req.body;
+      const { movieName, movieReview, rating, director, language, category } = req.body;
       
       let q = "UPDATE movie SET";
       let values = [];
@@ -498,9 +498,26 @@ app.put("/api/update/:movieId", (req, res) => {
         values.push(movieReview);
       }
   
-      if (img) {
+      if (req.file) {
+        // aws-s3 resize image
+        const buffer = await sharp(req.file.buffer).resize({height: 1920,width: 1080, fit: "contain"}).toBuffer();
+        //
+        const newImg = randomImageName() // aws image
+        // aws-s3 - send image to aws
+        const params = {
+          Bucket: bucketName,
+          Key: newImg,
+          Body: buffer,
+          ContentType:req.file.mimetype,
+        }
+        const command = new PutObjectCommand(params);
+
+        await s3.send(command);
+        const imageURL = `https://${process.env.BUCKET_NAME}.s3.amazonaws.com/${newImg}`;
+        //
+
         q += " img = ?,";
-        values.push(img);
+        values.push(imageURL);
       }
   
       if (rating) {
@@ -790,49 +807,98 @@ app.get("/api/comments/:id", (req,res) => {
 });
 
 // add comments to a movie
+// app.post('/api/add/comments/:id', upload.single('image'), async (req, res) => {
+//     // aws-s3 resize image
+//     const buffer = await sharp(req.file.buffer).resize({height: 1920,width: 1080, fit: "contain"}).toBuffer();
+
+//     const movie_id = req.params.id;
+//     const user_id = req.body.user_id;
+//     const description = req.body.description;
+//     // const img = req.body.imgURL;
+//     const date = new Date();
+//     const created_at = date.toISOString().slice(0, 19).replace('T', ' ');
+//     const img = randomImageName() // aws image
+
+//     // aws-s3 - send image to aws
+//     const params = {
+//       Bucket: bucketName,
+//       Key: img,
+//       Body: buffer,
+//       ContentType:req.file.mimetype,
+//     }
+//     const command = new PutObjectCommand(params);
+
+//     await s3.send(command);
+//     //
+
+//     const imageURL = `https://${process.env.BUCKET_NAME}.s3.amazonaws.com/${img}`;
+
+//     const query = `INSERT INTO Comments (user_id, movie_id, img, date, description) VALUES (?)`;
+//     const values = [
+//         user_id,
+//         movie_id,
+//         imageURL,
+//         created_at,
+//         description,
+//     ];
+//     // console.log(values);
+//     db.query(query,[values], async (err, data) => {
+//         if (err) {
+//             return res.status(500).json(err);
+//         }
+
+//         res.status(200).json(data);
+//     });
+// });
+
 app.post('/api/add/comments/:id', upload.single('image'), async (req, res) => {
-    // aws-s3 resize image
-    const buffer = await sharp(req.file.buffer).resize({height: 1920,width: 1080, fit: "contain"}).toBuffer();
-
-    const movie_id = req.params.id;
-    const user_id = req.body.user_id;
-    const description = req.body.description;
-    // const img = req.body.imgURL;
-    const date = new Date();
-    const created_at = date.toISOString().slice(0, 19).replace('T', ' ');
-    const img = randomImageName() // aws image
-
-    // aws-s3 - send image to aws
-    const params = {
-      Bucket: bucketName,
-      Key: img,
-      Body: buffer,
-      ContentType:req.file.mimetype,
-    }
-    const command = new PutObjectCommand(params);
-
-    await s3.send(command);
-    //
-
-    const imageURL = `https://${process.env.BUCKET_NAME}.s3.amazonaws.com/${img}`;
-
-    const query = `INSERT INTO Comments (user_id, movie_id, img, date, description) VALUES (?)`;
-    const values = [
-        user_id,
-        movie_id,
-        imageURL,
-        created_at,
-        description,
-    ];
-    // console.log(values);
-    db.query(query,[values], async (err, data) => {
-        if (err) {
-            return res.status(500).json(err);
-        }
-
-        res.status(200).json(data);
-    });
+  let imageURL = null; // Initialize the imageURL as null
+  
+  if (req.file) {
+      // aws-s3 resize image
+      const buffer = await sharp(req.file.buffer).resize({ height: 1920, width: 1080, fit: "contain" }).toBuffer();
+  
+      // Generate a random image name for AWS S3
+      const img = randomImageName();
+  
+      // aws-s3 - send image to AWS S3
+      const params = {
+          Bucket: bucketName,
+          Key: img,
+          Body: buffer,
+          ContentType: req.file.mimetype,
+      }
+      const command = new PutObjectCommand(params);
+  
+      await s3.send(command);
+  
+      imageURL = `https://${process.env.BUCKET_NAME}.s3.amazonaws.com/${img}`;
+  }
+  
+  const movie_id = req.params.id;
+  const user_id = req.body.user_id;
+  const description = req.body.description;
+  const date = new Date();
+  const created_at = date.toISOString().slice(0, 19).replace('T', ' ');
+  // 
+  const query = `INSERT INTO Comments (user_id, movie_id, img, date, description) VALUES (?)`;
+  const values = [
+      user_id,
+      movie_id,
+      imageURL,
+      created_at,
+      description,
+  ];
+  
+  db.query(query, [values], async (err, data) => {
+      if (err) {
+          return res.status(500).json(err);
+      }
+  
+      res.status(200).json(data);
+  });
 });
+
 
 // delete single comment (original)
 // app.delete("/api/comment/delete/:id", (req,res) => {
