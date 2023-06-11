@@ -501,7 +501,6 @@ export default function Home() {
                                         <input
                                             type="file"
                                             onChange={(e) => {
-                                            console.log(e.target.files[0]);
                                             setImg(e.target.files[0]);
                                             }}
                                         />{" "}
