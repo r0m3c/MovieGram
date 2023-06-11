@@ -159,7 +159,7 @@ export default function Profile(props) {
         <h2 style={{textAlign:"center"}}>Profile</h2>
         <div style={{textAlign: "center",backgroundColor:"black", borderRadius:"20px", color:"white", paddingTop:"3%", paddingBottom: "3%"}}>
           <h2 >{user.username}</h2>
-          {user.img ? <img src={"../uploads/" + String(user.img)} style={{width: "100px", height: "100px", borderRadius: "50%", border: '2px solid white'}} /> : <img style={{width: "100px", height: "100px", borderRadius: "50%", border: '2px solid white'}} src={UserImg}/>}
+          {user.img ? <img src={user.img} style={{width: "100px", height: "100px", borderRadius: "50%", border: '2px solid white'}} /> : <img style={{width: "100px", height: "100px", borderRadius: "50%", border: '2px solid white'}} src={UserImg}/>}
           <p><b>Bio:</b> {user.bio}</p>
           <p><b>Account created on:</b> {formatDate(user.created_at)}</p>
           {currentUser ? currentUser.id === user.id && (
@@ -528,7 +528,7 @@ export default function Profile(props) {
                           {/* <hr /> */}
                           <p><b>User reported:</b> <Link to={"/profile/" + String(report.id_reported)}>{report.reported_username}</Link> </p>
                           <p><b> {report.movieName}</b></p>
-                          <img src={"../uploads/" + String(report.movieImg)} style={{width: "100px", height: "100px", borderRadius: "15px"}}/>
+                          <img src={report.movieImg} style={{width: "100px", height: "100px", borderRadius: "15px"}}/>
                           <p><b>Reported for:</b> {report.description}</p>
                           <p><b>Type of report:</b> {report.type}</p>
                           <hr />
@@ -557,7 +557,7 @@ export default function Profile(props) {
                           {/* <hr /> */}
                           {/* <p><b>User whose post was reported:</b> <Link to={"/profile/" + String(report.id_reported)}>{report.reported_username}</Link> </p> */}
                           <p><b>{report.movieName}</b></p>
-                          <img src={"../uploads/" + String(report.movieImg)} style={{width: "100px", height: "100px", borderRadius: "15px"}}/>
+                          <img src={report.movieImg} style={{width: "100px", height: "100px", borderRadius: "15px"}}/>
                           <p><b>Reported for:</b> {report.description}</p>
                           <p><b>Type of report:</b> {report.type}</p>
                           <hr />
