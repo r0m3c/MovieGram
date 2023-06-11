@@ -195,7 +195,7 @@ const EditMovie = (props) => {
               <div>
                 <label >Img:</label> <br/>
                 <img
-                  src={"../uploads/" + String(img)} style={{width: "200px", borderRadius: "15px"}}
+                  src={img} style={{width: "200px", borderRadius: "15px"}}
                 /> <br/>
                 <input type="file" onChange={(e) => {
                   setImg(e.target.files[0]);

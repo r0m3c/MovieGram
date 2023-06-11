@@ -151,7 +151,6 @@ export default function Home() {
                 console.log(err);
             }
         };
-
         fetchData();
     }, []);
 
@@ -164,27 +163,30 @@ export default function Home() {
         }
     };
 
-    const upload = async() => {
-        try {
-          const formData = new FormData();
-          formData.append("file",img);
-          const res = await Axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/upload`, formData);
-          return res.data;
-        } catch (err) {
-          console.log(err);
-        }
-    };
+    // const upload = async() => {
+    //     try {
+    //       const formData = new FormData();
+    //       formData.append("file",img);
+    //       const res = await Axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/upload`, formData);
+    //       return res.data;
+    //     } catch (err) {
+    //       console.log(err);
+    //     }
+    // };
 
     const addComment = async (movieId, user_id, description) => {
         try {
-            let imgURL;
-            if (img) {
-                imgURL = await upload();
-                console.log(imgURL);
-            }
-            // const imgURL = await upload();
-            // console.log(imgURL);
-            await Axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/add/comments/` + String(movieId), { user_id, description, imgURL })
+            // let imgURL;
+            // if (img) {
+            //     imgURL = await upload();
+            //     console.log(imgURL);
+            // }
+            const formData = new FormData();
+            formData.append("image",img);
+            formData.append("description",description);
+            formData.append("user_id",user_id);
+            
+            await Axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/add/comments/` + String(movieId), formData)
         } catch(err) {
             console.log(err);
         }
@@ -416,7 +418,7 @@ export default function Home() {
                                             // </div>
                                             <div key={comment.id}>
                                                 <div style={{ display: "flex", alignItems: "center" }}>
-                                                    <MovieUserImg src={"./uploads/" + String(comment.userImg)} />
+                                                    <MovieUserImg src={comment.userImg} />
                                                     <MovieUserName>
                                                     <Link style={{color:"white"}} to={"/profile/" + String(comment.user_id)}><b>{comment.username}</b></Link>
                                                     </MovieUserName>
@@ -427,7 +429,7 @@ export default function Home() {
                                                 <div>
                                                     <p style={{ paddingTop: "6px" }}>{comment.description}</p>
                                                     {comment.img && (
-                                                    <img src={"./uploads/" + String(comment.img)} style={{ width: "200px", borderRadius: "15px", border: '2px solid white' }} />
+                                                    <img src={comment.img} style={{ width: "200px", borderRadius: "15px", border: '2px solid white' }} />
                                                     )}
                                                 </div>
 
@@ -490,7 +492,7 @@ export default function Home() {
                                                 e.target.value = "";
                                                 const fileInput = document.querySelector('input[type="file"]');
                                             if (fileInput) {
-                                            fileInput.value = null;
+                                                fileInput.value = null;
                                             }
                                             }
                                             }}
@@ -499,6 +501,7 @@ export default function Home() {
                                         <input
                                             type="file"
                                             onChange={(e) => {
+                                            console.log(e.target.files[0]);
                                             setImg(e.target.files[0]);
                                             }}
                                         />{" "}

@@ -301,7 +301,7 @@ export default function Lists() {
                   <TableCell>{index+1}</TableCell>
                   <TableCell>
                     <ImageContainer>
-                      {movie.img && <UserIMG src={"./uploads/" + String(movie.img)} />}
+                      {movie.img && <UserIMG src={movie.img} />}
                     </ImageContainer>
                   </TableCell>
                   <TableCell>{movie.movieName}</TableCell>
