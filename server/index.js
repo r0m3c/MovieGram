@@ -19,18 +19,18 @@ dotenv.config();
 const app = express(); 
 
 // Making Local Changes
-// const corsOptions = {
-//     origin: 'http://127.0.0.1:5173',
-//     credentials: true,
-//     exposedHeaders: 'Access-Control-Allow-Credentials',
-// };
+const corsOptions = {
+    origin: 'http://127.0.0.1:5173',
+    credentials: true,
+    exposedHeaders: 'Access-Control-Allow-Credentials',
+};
 
 // Launching Vercel website
-const corsOptions = {
-  origin: 'https://movie-gram.vercel.app',
-  credentials: true,
-  exposedHeaders: 'Access-Control-Allow-Credentials',
-};
+// const corsOptions = {
+//   origin: 'https://movie-gram.vercel.app',
+//   credentials: true,
+//   exposedHeaders: 'Access-Control-Allow-Credentials',
+// };
 
 app.use(cookieParser());
 app.use(cors(corsOptions));
@@ -39,16 +39,16 @@ app.use(bodyParser.urlencoded({extended:true}));
 //
 
 // MySQL db connection: MySQLWorkBench
-// const db = mysql2.createConnection({
-//     host: 'localhost',
-//     user: 'root',
-//     password: 'Leocool99!',
-//     database: 'MovieGram'
-// });
+const db = mysql2.createConnection({
+    host: 'localhost',
+    user: 'root',
+    password: 'Leocool99!',
+    database: 'MovieGram'
+});
 
 // Railway DB Connection
-const url = `mysql://${process.env.MYSQLUSER}:${process.env.MYSQLPASSWORD}@${process.env.MYSQLHOST}:${process.env.MYSQLPORT}/${process.env.MYSQLDATABASE}`
-const db = mysql2.createConnection(url);
+// const url = `mysql://${process.env.MYSQLUSER}:${process.env.MYSQLPASSWORD}@${process.env.MYSQLHOST}:${process.env.MYSQLPORT}/${process.env.MYSQLDATABASE}`
+// const db = mysql2.createConnection(url);
 
 // const db = mysql.createConnection({
 //   host: '127.0.0.1',
@@ -740,19 +740,19 @@ app.get("/api/user/:id", (req,res) => {
 // });
 
 // update a user info (new)
-app.put("/api/update/user/:id", (req, res) => {
+app.put("/api/update/user/:id", upload.single('image'), (req, res) => {
     const token = req.headers.authorization;
     
     if (!token) {
       return res.status(401).json("Not authenticated");
     }
   
-    jwt.verify(token, "jwtkey", (err, userInfo) => {
+    jwt.verify(token, "jwtkey", async (err, userInfo) => {
       if (err) {
         return res.status(403).json("Token is not valid");
       }
       const id = req.params.id;
-      const { username, bio, img } = req.body;
+      const { username, bio } = req.body;
   
       let q = "UPDATE users SET";
       let values = [];
@@ -767,9 +767,26 @@ app.put("/api/update/user/:id", (req, res) => {
         values.push(bio);
       }
   
-      if (img) {
+      if (req.file) {
+        // aws-s3 resize image
+        const buffer = await sharp(req.file.buffer).resize({height: 1920,width: 1080, fit: "contain"}).toBuffer();
+        //
+        const newImg = randomImageName() // aws image
+        // aws-s3 - send image to aws
+        const params = {
+          Bucket: bucketName,
+          Key: newImg,
+          Body: buffer,
+          ContentType:req.file.mimetype,
+        }
+        const command = new PutObjectCommand(params);
+
+        await s3.send(command);
+        const imageURL = `https://${process.env.BUCKET_NAME}.s3.amazonaws.com/${newImg}`;
+        //
+
         q += " img = ?,";
-        values.push(img);
+        values.push(imageURL);
       }
   
       q = q.slice(0, -1);
@@ -1023,7 +1040,7 @@ app.get("/api/comment/get/:id", (req,res) => {
 // });
 
 // update a comment (new)
-app.put("/api/comment/update/:id", (req, res) => {
+app.put("/api/comment/update/:id", upload.single('image'), (req, res) => {
     const token = req.headers.authorization;
     
     if (!token) {
@@ -1031,11 +1048,11 @@ app.put("/api/comment/update/:id", (req, res) => {
     }
     const id = req.params.id;
   
-    jwt.verify(token, "jwtkey", (err, userInfo) => {
+    jwt.verify(token, "jwtkey", async (err, userInfo) => {
       if (err) {
         return res.status(403).json("Token is not valid");
       }
-      const { description, img } = req.body;
+      const { description } = req.body;
   
       let q = "UPDATE Comments SET";
       let values = [];
@@ -1045,9 +1062,26 @@ app.put("/api/comment/update/:id", (req, res) => {
         values.push(description);
       }
   
-      if (img) {
+      if (req.file) {
+        // aws-s3 resize image
+        const buffer = await sharp(req.file.buffer).resize({height: 1920,width: 1080, fit: "contain"}).toBuffer();
+        //
+        const newImg = randomImageName() // aws image
+        // aws-s3 - send image to aws
+        const params = {
+          Bucket: bucketName,
+          Key: newImg,
+          Body: buffer,
+          ContentType:req.file.mimetype,
+        }
+        const command = new PutObjectCommand(params);
+
+        await s3.send(command);
+        const imageURL = `https://${process.env.BUCKET_NAME}.s3.amazonaws.com/${newImg}`;
+        //
+
         q += " img = ?,";
-        values.push(img);
+        values.push(imageURL);
       }
   
       q = q.slice(0, -1);
@@ -1722,13 +1756,13 @@ app.get("/api/watchlist/watched_count/:id", (req,res) => {
 });
 
 // run when working locally
-// app.listen(2030, () => {
-//     console.log("running on port 2030");
-// })
+app.listen(2030, () => {
+    console.log("running on port 2030");
+})
 
 // run when using Railway
-const port = process.env.PORT || 3000;
-app.listen(port,"0.0.0.0", () => {
-    console.log(`running on port ${port}`);
-})
+// const port = process.env.PORT || 3000;
+// app.listen(port,"0.0.0.0", () => {
+//     console.log(`running on port ${port}`);
+// })
 
