@@ -778,7 +778,7 @@ app.get("/api/comments/:id", (req,res) => {
 
     // const q = "SELECT * FROM comments WHERE movie_id = ?";
 
-    const q = "SELECT c.id, c.description, c.user_id, c.img, c.date, c.movie_id, u.username, u.img as userImg FROM comments c JOIN users u ON c.user_id = u.id WHERE c.movie_id = ?";
+    const q = "SELECT c.id, c.description, c.user_id, c.img, c.date, c.movie_id, u.username, u.img as userImg FROM Comments c JOIN users u ON c.user_id = u.id WHERE c.movie_id = ?";
 
     db.query(q,[movie_id], (err,data) => {
         if (err) {
